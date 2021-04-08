@@ -6,5 +6,4 @@ import lombok.Data;
 public class PurchaseRequestDTO{
     private TicketDTO ticket;
     private StatusDTO statusCode;
-
 }
