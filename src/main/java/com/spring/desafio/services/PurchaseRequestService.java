@@ -16,6 +16,7 @@ import java.util.NoSuchElementException;
 public class PurchaseRequestService {
 
     ArticleService articleService = new ArticleService();
+    TicketService ticketService = new TicketService();
 
     public PurchaseRequestDTO processGenerateRequest (List<ArticleDTO> articlesDTOS) throws Exception {
         PurchaseRequestDTO requestDTO = new PurchaseRequestDTO();
@@ -23,7 +24,7 @@ public class PurchaseRequestService {
         StatusDTO status;
         try{
             ArrayList<Article> articlesFromDataBase = (ArrayList<Article>) articleService.mapListDTOToEntity(articlesDTOS);
-            ticket = generateTicketFromPurchaseOrder(articlesFromDataBase,articlesDTOS);
+            ticket = ticketService.generateTicketFromPurchaseOrder(articlesFromDataBase,articlesDTOS);
             status = new StatusDTO(200, "The request has been processed successfully");
         }
         catch (QuantityException e) {
@@ -41,21 +42,6 @@ public class PurchaseRequestService {
         requestDTO.setTicket(ticket);
         requestDTO.setStatusCode(status);
         return requestDTO;
-    }
-
-    private TicketDTO generateTicketFromPurchaseOrder (List<Article> articles, List<ArticleDTO> articlesDTOS) throws QuantityException {
-        TicketDTO ticket = new TicketDTO();
-        ticket.setId();
-        Double totalPrice = 0.0;
-        ticket.setArticles((ArrayList<ArticleDTO>) articlesDTOS);
-        for (int i = 0; i < articles.size(); i++ ){
-            if (articles.get(i).getQuantity() <= articlesDTOS.get(i).getQuantity()){
-                throw new QuantityException("Quantity can not be processed for product " + articlesDTOS.get(i).getName());
-            }
-            totalPrice += articles.get(i).getPrice();
-        }
-        ticket.setTotal(totalPrice);
-        return ticket;
     }
 
 }
